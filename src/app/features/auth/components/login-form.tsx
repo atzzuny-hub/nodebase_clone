@@ -92,6 +92,7 @@ export function LoginForm(){
                                             type="button"
                                             disabled={isPending}
                                         >
+                                            <Image src="/logos/github.svg" width={20} height={20} alt={"GitHub"}/>
                                             GitHub로 진행하기
                                         </Button>
                                         <Button
@@ -100,6 +101,7 @@ export function LoginForm(){
                                             type="button"
                                             disabled={isPending}
                                         >
+                                            <Image src="/logos/google.svg" width={20} height={20} alt={"Google"}/>
                                             Google로 진행하기
                                         </Button>
                                     </div>
