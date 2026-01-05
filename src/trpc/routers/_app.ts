@@ -1,9 +1,28 @@
 import { inngest } from '@/inngest/client';
-import { createTRPCRouter, protectedProcedure } from '../init';
+import { baseProcedure, createTRPCRouter, protectedProcedure } from '../init';
 import prisma from '@/lib/db';
-import { resolve } from 'path';
 
 export const appRouter = createTRPCRouter({
+
+  // 앱 내부에서 사용하지말고 
+  // testAi : protectedProcedure.mutation(async () => {
+  //   const {text} = await generateText({
+  //     model: google("gemini-2.5-flash"),
+  //     prompt: "4인분 채식 라자냐 레시피를 작성해 줘"
+  //   });
+
+  //   return text;
+  // }),
+
+  // 보호된 절차를 기본으로 사용
+  testAi : baseProcedure.mutation(async () => {
+    await inngest.send({
+      name: "execute/ai",
+    })
+
+    return {success: true, message: "작업 대기 중"}
+  }),
+
   getWorkflows: protectedProcedure.query(({ctx}) => {    
       return prisma.workflow.findMany()
   }),

@@ -1,25 +1,26 @@
 import prisma from "@/lib/db";
 import { inngest } from "./client";
+import { generateText } from "ai";
+import { createGoogleGenerativeAI } from "@ai-sdk/google";
 
-export const helloWorld = inngest.createFunction(
-  { id: "hello-world", retries: 5 },
-  { event: "test/hello.world" },
+const google = createGoogleGenerativeAI()
+
+export const execute = inngest.createFunction(
+  { id: "execute-ai"},
+  { event: "execute/ai" },
   async ({ event, step }) => {
+    await step.sleep("pretend", "5s")
 
-    // 비디오 가져오기 (외부 API / 스토리지)
-    await step.sleep("비디오 가져오기", "1s");
-    // 비디오 → 텍스트 변환 (무거운 연산)
-    await step.sleep("비디오 → 텍스트 변환", "1s");
-    // OpenAI로 전송해서 요약/분석
-    await step.sleep("OpenAI로 전송해서 요약/분석", "1s");
+    const {steps} = await step.ai.wrap(
+      "gemini-generate-text" ,
+      generateText, {
+        model: google("gemini-2.5-flash"),
+        system: "You are a helpful assistant",
+        prompt:"2 +2 = ?"
+      }
+    )
 
-    // return { message: `Hello ${event.data.email}!` };
-    await step.run("create-workflow", () => {
-        return prisma.workflow.create({
-            data: {
-                name: "workflow-from-inngest"
-            }
-        })
-    })
+    return steps;
+    
   },
 );
