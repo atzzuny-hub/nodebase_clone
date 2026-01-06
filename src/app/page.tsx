@@ -15,6 +15,9 @@ const Page = () =>{
   const testAi = useMutation(trpc.testAi.mutationOptions({
     onSuccess : () => {
       toast.success("작업 성공")
+    },
+    onError: () => {
+      toast.error("문제가 발생했습니다.");
     }
   }))
 

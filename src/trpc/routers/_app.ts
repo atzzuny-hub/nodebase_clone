@@ -1,6 +1,7 @@
 import { inngest } from '@/inngest/client';
 import { baseProcedure, createTRPCRouter, protectedProcedure } from '../init';
 import prisma from '@/lib/db';
+import { TRPCError } from '@trpc/server';
 
 export const appRouter = createTRPCRouter({
 
@@ -16,6 +17,10 @@ export const appRouter = createTRPCRouter({
 
   // 보호된 절차를 기본으로 사용
   testAi : baseProcedure.mutation(async () => {
+
+    throw new TRPCError({ code: "BAD_REQUEST", message: "문제가 발생했습니다."})
+
+    
     await inngest.send({
       name: "execute/ai",
     })
