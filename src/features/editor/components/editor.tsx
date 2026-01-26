@@ -20,6 +20,8 @@ import { ErrorView, LoadingView } from "@/components/entity-components"
 import { useSuspenseWorkflow } from "@/features/workflows/hooks/use-workflows"
 import { nodeComponents } from '@/config/node-components';
 import { AddNodeButton } from './add-node-button';
+import { useSetAtom } from 'jotai';
+import { editorAtom } from '../store/atoms';
 
 export const EditorLoading = () => {
     return <LoadingView message="Loading editor..."/>
@@ -28,6 +30,7 @@ export const EditorLoading = () => {
 export const EditorError = () => {
     return <ErrorView message="Error loading editor..."/>
 }
+
 
 
 // 플로우차트의 박스/요소
@@ -55,6 +58,9 @@ const initialEdges = [{
 
 export const Editor = ({workflowId}:{workflowId: string}) => {
     const {data: workflow} = useSuspenseWorkflow(workflowId)
+
+
+const setEditor = useSetAtom(editorAtom)
 
     // 상태 관리
     const [nodes, setNodes] = useState<Node[]>(workflow.nodes); // 현재 캔버스에 있는 모든 노드들
@@ -93,13 +99,20 @@ export const Editor = ({workflowId}:{workflowId: string}) => {
     return(
         <div className='size-full'>
             <ReactFlow
-                nodes={nodes}              // 표시할 노드들
-                edges={edges}              // 표시할 엣지들
-                onNodesChange={onNodesChange}  // 노드 변경 핸들러
-                onEdgesChange={onEdgesChange}  // 엣지 변경 핸들러
-                onConnect={onConnect}      // 연결 생성 핸들러
+                nodes={nodes}            
+                edges={edges}            
+                onNodesChange={onNodesChange} 
+                onEdgesChange={onEdgesChange}  
+                onConnect={onConnect}    
                 nodeTypes={nodeComponents}
-                fitView                    // 초기 로드시 모든 노드가 보이도록 자동 줌
+                onInit={setEditor}
+                fitView   
+                // 추가
+                snapGrid={[10, 10]}  
+                snapToGrid   
+                panOnScroll   
+                panOnDrag
+                selectionOnDrag    
             >
                 <Background/>
                 <Controls/>
